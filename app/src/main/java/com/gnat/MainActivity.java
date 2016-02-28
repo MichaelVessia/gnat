@@ -6,28 +6,38 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity {
 
     WifiManager mainWifi;
-    WifiReceiver receiverWifi;
+
+    List<String> ssids = new ArrayList<>();
+    ListView wifiListView;
+    List<WifiConfiguration> wifiList;
+    ArrayAdapter<String> listAdapter;
 
 
-    // Handler is used for multithreading
-    private final Handler handler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,17 +46,22 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-
+        wifiListView = (ListView) findViewById(R.id.wifiList);
+        listAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1);
         mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        receiverWifi = new WifiReceiver();
-        registerReceiver(receiverWifi, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
         if(!mainWifi.isWifiEnabled()) {
             mainWifi.setWifiEnabled(true);
         }
 
-        mainWifi.startScan();
+        new AsyncConnection().execute();
 
+    }
+
+    public void refresh(){
+        new AsyncConnection().execute();
+        updateNetworkList();
     }
 
     @Override
@@ -54,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.refresh:
                 // User chose the "Refesh" item, refresh the network list...
-                doInBackground();
+                refresh();
                 return true;
 
             default:
@@ -73,60 +88,64 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void doInBackground() {
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-
-                receiverWifi = new WifiReceiver();
-                registerReceiver(receiverWifi, new IntentFilter(
-                        WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-
-                mainWifi.startScan();
-            }
-        }, 1000);
-    }
 
     @Override
     protected void onPause()
     {
-        unregisterReceiver(receiverWifi);
         super.onPause();
     }
 
     @Override
     protected void onResume()
     {
-        registerReceiver(receiverWifi, new IntentFilter(
-                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         super.onResume();
     }
 
-    class WifiReceiver extends BroadcastReceiver {
-        List<String> ssids = new ArrayList<>();
-        ListView wifiListView;
+    /*
+     * Listview and ssids list need to be cleared to prevent duplication
+     */
+    public void clearNetworkList() {
+        listAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, new ArrayList<String>());
+        ssids = new ArrayList<>();
+    }
+
+    public void updateNetworkList() {
+
+        clearNetworkList();
+
+        wifiListView.setAdapter(listAdapter);
 
 
-        public void onReceive(Context c, Intent intent) {
-            List<ScanResult> wifiList = mainWifi.getScanResults();
+        for (WifiConfiguration conf : wifiList) {
+            ssids.add(conf.SSID.substring(1,conf.SSID.length()-1));
+        }
 
-           for(ScanResult res : wifiList){
-               ssids.add(res.SSID);
-           }
+        for (String ssid : ssids) {
+            listAdapter.add(ssid);
+        }
 
-            wifiListView = (ListView)findViewById(R.id.wifiList);
-
-            ArrayAdapter<String> listAdapter = new ArrayAdapter<>(c,
-                    android.R.layout.simple_list_item_1);
-
-            for(String ssid : ssids){
-                listAdapter.add(ssid);
-            }
+        wifiListView.setAdapter(listAdapter);
+    }
 
 
-            wifiListView.setAdapter(listAdapter);
+    private class AsyncConnection extends AsyncTask<Void, Void, Void> {
+
+        public AsyncConnection() {
+            super();
+            mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifiList = new ArrayList<>();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            wifiList = mainWifi.getConfiguredNetworks();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void results){
+            updateNetworkList();
         }
     }
+
 }

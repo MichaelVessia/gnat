@@ -12,12 +12,27 @@
     tools:context="com.gnat.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/mainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mainText"
+            />
+
     <TextView
-        android:id="@+id/mainText"
+        android:id="@+id/networkText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <ListView
         android:id="@+id/wifiList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 </RelativeLayout>
