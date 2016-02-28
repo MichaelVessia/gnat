@@ -2,8 +2,6 @@ package com.gnat;
 
 
 import android.content.Context;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,20 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
 
 
 public class MainActivity extends AppCompatActivity {
 
-    WifiManager mainWifi;
-
-    List<String> ssids = new ArrayList<>();
-    ListView wifiListView;
-    List<WifiConfiguration> configuredWifiList;
-    List<ScanResult> localWifiList;
-    ArrayAdapter<String> listAdapter;
+    WifiManager mWifiManager;
+    NetworkListManager mNetworkListManager = new NetworkListManager(this);
 
 
 
@@ -39,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        wifiListView = (ListView) findViewById(R.id.wifiList);
-        listAdapter = new ArrayAdapter<>(this,
+        mNetworkListManager.wifiListView = (ListView) findViewById(R.id.wifiList);
+        mNetworkListManager.listAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1);
+
+
 
         new AsyncConnection().execute();
 
@@ -49,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void refresh(){
         new AsyncConnection().execute();
-        updateNetworkList();
+        mNetworkListManager.updateNetworkList(mWifiManager);
     }
 
     @Override
@@ -88,75 +81,31 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onResume();
     }
-
-    /*
-     * Listview and ssids list need to be cleared to prevent duplication
-     */
-    public void clearNetworkList() {
-
-        listAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, new ArrayList<String>());
-
-        ssids = new ArrayList<>();
-    }
-
-    public void updateNetworkList() {
-
-        clearNetworkList();
-
-        wifiListView.setAdapter(listAdapter);
-
-        List<String> configuredSSID = new ArrayList<>();
-
-        for(WifiConfiguration conf : configuredWifiList) {
-            configuredSSID.add(conf.SSID.substring(1, conf.SSID.length()-1));
-        }
-
-        String currentConnection = mainWifi.getConnectionInfo().getSSID();
-        currentConnection = currentConnection.substring(1, currentConnection.length()-1);
-
-        for(ScanResult result : localWifiList) {
-            if(configuredSSID.contains(result.SSID)) {
-                if(result.SSID.equals(currentConnection)) {
-                    ssids.add(result.SSID + " " + "(Connected)");
-                } else {
-                    ssids.add(result.SSID + " " + result.BSSID);
-                }
-            }
-        }
-
-        for (String ssid : ssids) {
-            listAdapter.add(ssid);
-        }
-
-
-        wifiListView.setAdapter(listAdapter);
-    }
-
+    
 
     private class AsyncConnection extends AsyncTask<Void, Void, Void> {
 
         public AsyncConnection() {
             super();
-            mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-            if(!mainWifi.isWifiEnabled()) {
-                mainWifi.setWifiEnabled(true);
+            if(!mWifiManager.isWifiEnabled()) {
+                mWifiManager.setWifiEnabled(true);
             }
 
-            localWifiList = new ArrayList<>();
-            configuredWifiList = new ArrayList<>();
+            mNetworkListManager.localWifiList = new ArrayList<>();
+            mNetworkListManager.configuredWifiList = new ArrayList<>();
         }
         @Override
         protected Void doInBackground(Void... voids) {
-            configuredWifiList = mainWifi.getConfiguredNetworks();
-            localWifiList = mainWifi.getScanResults();
+            mNetworkListManager.configuredWifiList = mWifiManager.getConfiguredNetworks();
+            mNetworkListManager.localWifiList = mWifiManager.getScanResults();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void results){
-            updateNetworkList();
+            mNetworkListManager.updateNetworkList(mWifiManager);
         }
     }
 
