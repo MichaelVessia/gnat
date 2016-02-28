@@ -1,26 +1,18 @@
 package com.gnat;
 
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     List<String> ssids = new ArrayList<>();
     ListView wifiListView;
-    List<WifiConfiguration> wifiList;
+    List<WifiConfiguration> configuredWifiList;
+    List<ScanResult> localWifiList;
     ArrayAdapter<String> listAdapter;
 
 
@@ -49,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
         wifiListView = (ListView) findViewById(R.id.wifiList);
         listAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1);
-        mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-
-        if(!mainWifi.isWifiEnabled()) {
-            mainWifi.setWifiEnabled(true);
-        }
 
         new AsyncConnection().execute();
 
@@ -67,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.refresh:
+            case R.id.menu_refresh:
                 // User chose the "Refesh" item, refresh the network list...
                 refresh();
                 return true;
@@ -105,8 +93,10 @@ public class MainActivity extends AppCompatActivity {
      * Listview and ssids list need to be cleared to prevent duplication
      */
     public void clearNetworkList() {
+
         listAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, new ArrayList<String>());
+
         ssids = new ArrayList<>();
     }
 
@@ -116,14 +106,29 @@ public class MainActivity extends AppCompatActivity {
 
         wifiListView.setAdapter(listAdapter);
 
+        List<String> configuredSSID = new ArrayList<>();
 
-        for (WifiConfiguration conf : wifiList) {
-            ssids.add(conf.SSID.substring(1,conf.SSID.length()-1));
+        for(WifiConfiguration conf : configuredWifiList) {
+            configuredSSID.add(conf.SSID.substring(1, conf.SSID.length()-1));
+        }
+
+        String currentConnection = mainWifi.getConnectionInfo().getSSID();
+        currentConnection = currentConnection.substring(1, currentConnection.length()-1);
+
+        for(ScanResult result : localWifiList) {
+            if(configuredSSID.contains(result.SSID)) {
+                if(result.SSID.equals(currentConnection)) {
+                    ssids.add(result.SSID + " " + "(Connected)");
+                } else {
+                    ssids.add(result.SSID + " " + result.BSSID);
+                }
+            }
         }
 
         for (String ssid : ssids) {
             listAdapter.add(ssid);
         }
+
 
         wifiListView.setAdapter(listAdapter);
     }
@@ -134,11 +139,18 @@ public class MainActivity extends AppCompatActivity {
         public AsyncConnection() {
             super();
             mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            wifiList = new ArrayList<>();
+
+            if(!mainWifi.isWifiEnabled()) {
+                mainWifi.setWifiEnabled(true);
+            }
+
+            localWifiList = new ArrayList<>();
+            configuredWifiList = new ArrayList<>();
         }
         @Override
         protected Void doInBackground(Void... voids) {
-            wifiList = mainWifi.getConfiguredNetworks();
+            configuredWifiList = mainWifi.getConfiguredNetworks();
+            localWifiList = mainWifi.getScanResults();
             return null;
         }
 
