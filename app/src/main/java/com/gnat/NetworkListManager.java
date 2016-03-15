@@ -4,6 +4,7 @@ package com.gnat;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -48,14 +49,15 @@ public class NetworkListManager {
             configuredSSID.add(conf.SSID.substring(1, conf.SSID.length()-1));
         }
 
-        String currentConnection = main.getConnectionInfo().getSSID();
-        if(currentConnection.length() >=2) {
-            currentConnection = currentConnection.substring(1, currentConnection.length() - 1);
+        WifiInfo currentConnection = main.getConnectionInfo();
+        String currentSSID = main.getConnectionInfo().getSSID();
+        if(currentSSID.length() >=2) {
+            currentSSID = currentSSID.substring(1, currentSSID.length() - 1);
         }
 
         for(ScanResult result : localWifiList) {
             if(configuredSSID.contains(result.SSID)) {
-                if(result.SSID.equals(currentConnection)) {
+                if(result.BSSID.equals(currentConnection.getBSSID())) {
                     ssids.add(result.SSID + " " + "(Connected)");
                 } else {
                     ssids.add(result.SSID + " " + result.BSSID);
