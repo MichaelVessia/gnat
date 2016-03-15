@@ -2,6 +2,7 @@ package com.gnat;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_refresh:
                 // User chose the "Refesh" item, refresh the network list...
                 refresh();
+                return true;
+            case R.id.action_settings:
+                startActivity(new Intent(this, MyPreferenceActivity.class));
                 return true;
 
             default:
