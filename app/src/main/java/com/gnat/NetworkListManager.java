@@ -65,8 +65,12 @@ public class NetworkListManager {
             }
         }
 
-        for (String ssid : ssids) {
-            listAdapter.add(ssid);
+        if(ssids.size() == 0) {
+            listAdapter.add("No networks configured.");
+        } else {
+            for (String ssid : ssids) {
+                listAdapter.add(ssid);
+            }
         }
 
 

@@ -9,6 +9,7 @@
         android:title="@string/pref_group_server">
         <EditTextPreference
             android:inputType="number"
+            android:digits="0123456789."
             android:key="pref_server_ip"
             android:summary="@string/pref_server_summary"
             android:title="@string/pref_server_ip" />
