@@ -1,9 +1,15 @@
 package com.gnat;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.util.Patterns;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MyPreferenceActivity extends PreferenceActivity {
 
@@ -11,6 +17,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+
+        // IP of the user configured server
+        SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String ip = getPrefs.getString("pref_server_ip", "No IP");
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment {
@@ -18,7 +28,12 @@ public class MyPreferenceActivity extends PreferenceActivity {
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
+            Log.w("gnat", "Created fragment");
         }
+    }
+
+    public boolean validateIP(String ip){
+        return Patterns.IP_ADDRESS.matcher(ip).matches();
     }
 
 }

@@ -8,11 +8,14 @@
         android:key="pref_server"
         android:title="@string/pref_group_server">
         <EditTextPreference
+            android:id="@+id/pref_server_ip"
             android:inputType="number"
             android:digits="0123456789."
             android:key="pref_server_ip"
             android:summary="@string/pref_server_summary"
             android:title="@string/pref_server_ip" />
+
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_server_save_logs"
