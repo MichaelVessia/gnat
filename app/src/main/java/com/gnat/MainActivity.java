@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     WifiManager mWifiManager;
     NetworkListManager mNetworkListManager = new NetworkListManager(this);
+    NetworkLogger mNetworkLogger = new NetworkLogger(this);
 
 
 
@@ -40,14 +41,12 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1);
 
 
-
         new AsyncConnection().execute();
 
     }
 
     public void refresh(){
         new AsyncConnection().execute();
-        mNetworkListManager.updateNetworkList(mWifiManager);
     }
 
     @Override
@@ -97,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             super();
             mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
+
             if(!mWifiManager.isWifiEnabled()) {
                 mWifiManager.setWifiEnabled(true);
             }
@@ -108,12 +108,16 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             mNetworkListManager.configuredWifiList = mWifiManager.getConfiguredNetworks();
             mNetworkListManager.localWifiList = mWifiManager.getScanResults();
+
+
+            mNetworkLogger.getNetworkInformation();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void results){
             mNetworkListManager.updateNetworkList(mWifiManager);
+            mNetworkLogger.logNetworkInfo();
         }
     }
 
