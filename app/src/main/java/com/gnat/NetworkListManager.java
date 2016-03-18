@@ -15,10 +15,14 @@ import java.util.List;
 public class NetworkListManager {
 
     List<String> ssids = new ArrayList<>();
-    ListView wifiListView;
     List<WifiConfiguration> configuredWifiList;
+    ArrayAdapter<String> configuredWifiListAdapter;
+    ListView configuredWifiListView;
+
+
     List<ScanResult> localWifiList;
-    ArrayAdapter<String> listAdapter;
+    ArrayAdapter<String> localWifiListAdapter;
+    ListView localWifiListView;
     Context mContext;
 
     public NetworkListManager(Context c){
@@ -31,7 +35,10 @@ public class NetworkListManager {
    */
     public void clearNetworkList() {
 
-        listAdapter = new ArrayAdapter<>(mContext,
+        configuredWifiListAdapter = new ArrayAdapter<>(mContext,
+                android.R.layout.simple_list_item_1, new ArrayList<String>());
+
+        localWifiListAdapter = new ArrayAdapter<String>(mContext,
                 android.R.layout.simple_list_item_1, new ArrayList<String>());
 
         ssids = new ArrayList<>();
@@ -41,7 +48,8 @@ public class NetworkListManager {
 
         clearNetworkList();
 
-        wifiListView.setAdapter(listAdapter);
+        configuredWifiListView.setAdapter(configuredWifiListAdapter);
+        localWifiListView.setAdapter(localWifiListAdapter);
 
         List<String> configuredSSID = new ArrayList<>();
 
@@ -56,6 +64,7 @@ public class NetworkListManager {
         }
 
         for(ScanResult result : localWifiList) {
+            localWifiListAdapter.add(result.SSID + " " + result.BSSID);
             if(configuredSSID.contains(result.SSID)) {
                 if(result.BSSID.equals(currentConnection.getBSSID())) {
                     ssids.add(result.SSID + " " + "(Connected)");
@@ -66,15 +75,17 @@ public class NetworkListManager {
         }
 
         if(ssids.size() == 0) {
-            listAdapter.add("No networks configured.");
+            configuredWifiListAdapter.add("No networks configured.");
         } else {
             for (String ssid : ssids) {
-                listAdapter.add(ssid);
+                configuredWifiListAdapter.add(ssid);
             }
         }
 
 
-        wifiListView.setAdapter(listAdapter);
+        configuredWifiListView.setAdapter(configuredWifiListAdapter);
+        localWifiListView.setAdapter(localWifiListAdapter);
+
     }
 
 

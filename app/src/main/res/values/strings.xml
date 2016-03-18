@@ -2,7 +2,9 @@
     <string name="app_name">Gnat</string>
     <string name="action_settings">Settings</string>
     <string name="refresh">Refresh</string>
-    <string name="mainText">Configured Networks</string>
+    <string name="configNetworkText">Configured Networks</string>
+    <string name="localNetworkText">Local Networks</string>
+
 
     <string name="pref_server_ip">IP address</string>
     <string name="pref_server_summary">The IP address to connect to.</string>

@@ -31,8 +31,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        mNetworkListManager.wifiListView = (ListView) findViewById(R.id.wifiList);
-        mNetworkListManager.listAdapter = new ArrayAdapter<>(this,
+        mNetworkListManager.configuredWifiListView = (ListView) findViewById(R.id.configuredWifiList);
+        mNetworkListManager.configuredWifiListAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1);
+
+        mNetworkListManager.localWifiListView= (ListView) findViewById(R.id.localWifiList);
+        mNetworkListManager.configuredWifiListAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1);
 
 
