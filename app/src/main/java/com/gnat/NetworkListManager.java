@@ -72,10 +72,7 @@ public class NetworkListManager {
         }
 
         WifiInfo currentConnection = main.getConnectionInfo();
-        String currentSSID = main.getConnectionInfo().getSSID();
-        if(currentSSID.length() >=2) {
-            currentSSID = currentSSID.substring(1, currentSSID.length() - 1);
-        }
+
 
         for(ScanResult result : localWifiList) {
             localWifiListAdapter.add(result.SSID + " " + result.BSSID);

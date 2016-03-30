@@ -29,4 +29,11 @@ public class ConnectionInfo {
         String ssid = this.wifiInfo.getSSID();
         return ssid.replace("\"", "");
     }
+
+    public String getBSSID(){
+        String bssid = this.wifiInfo.getBSSID();
+        return bssid;
+    }
+
+
 }

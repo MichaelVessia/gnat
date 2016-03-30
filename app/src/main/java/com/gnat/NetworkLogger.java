@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class NetworkLogger {
 
@@ -27,7 +29,8 @@ public class NetworkLogger {
 
     public void logConnection(ConnectionInfo connection){
 
-        File file = new File(this.context.getExternalCacheDir(), System.currentTimeMillis()+"_"+connection.getSSID());
+        File file = new File(this.context.getExternalCacheDir(),
+                System.currentTimeMillis()+"_"+connection.getSSID()+".json");
 
         Log.w("gnat", this.context.getExternalCacheDir()+"");
 
@@ -47,8 +50,9 @@ public class NetworkLogger {
         writer.setIndent("    ");
 
         writer.beginObject();
-        writer.name("Time").value("" + System.currentTimeMillis());
+        writer.name("DateTime").value(DateFormat.getDateTimeInstance().format(new Date()));
         writer.name("SSID").value(connection.getSSID());
+        writer.name("BSSID").value(connection.getBSSID());
         writer.endObject();
         writer.close();
     }
