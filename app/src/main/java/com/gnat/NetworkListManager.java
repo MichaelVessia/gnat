@@ -14,20 +14,34 @@ import java.util.List;
 
 public class NetworkListManager {
 
-    List<String> ssids = new ArrayList<>();
-    List<WifiConfiguration> configuredWifiList;
-    ArrayAdapter<String> configuredWifiListAdapter;
-    ListView configuredWifiListView;
+    private List<String> ssids = new ArrayList<>();
 
 
-    List<ScanResult> localWifiList;
-    ArrayAdapter<String> localWifiListAdapter;
-    ListView localWifiListView;
-    Context mContext;
+
+    private List<WifiConfiguration> configuredWifiList;
+    public ArrayAdapter<String> configuredWifiListAdapter;
+    public ListView configuredWifiListView;
+
+
+
+    private List<ScanResult> localWifiList;
+    public ArrayAdapter<String> localWifiListAdapter;
+    public ListView localWifiListView;
+
+    private Context mContext;
 
     public NetworkListManager(Context c){
         this.mContext = c;
     }
+
+    public void setConfiguredWifiList(List<WifiConfiguration> configuredWifiList) {
+        this.configuredWifiList = configuredWifiList;
+    }
+
+    public void setLocalWifiList(List<ScanResult> localWifiList) {
+        this.localWifiList = localWifiList;
+    }
+
 
 
     /*

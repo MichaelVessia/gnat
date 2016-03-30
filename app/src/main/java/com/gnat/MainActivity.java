@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     WifiManager mWifiManager;
     NetworkListManager mNetworkListManager = new NetworkListManager(this);
     NetworkLogger mNetworkLogger = new NetworkLogger(this);
+    ConnectionInfo connectionInfo = new ConnectionInfo(this);
 
 
 
@@ -97,27 +98,25 @@ public class MainActivity extends AppCompatActivity {
             mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 
+            // TODO: Add condition here to check if force wifi on is enabled in settings
             if(!mWifiManager.isWifiEnabled()) {
                 mWifiManager.setWifiEnabled(true);
             }
 
-            mNetworkListManager.localWifiList = new ArrayList<>();
-            mNetworkListManager.configuredWifiList = new ArrayList<>();
         }
         @Override
         protected Void doInBackground(Void... voids) {
-            mNetworkListManager.configuredWifiList = mWifiManager.getConfiguredNetworks();
-            mNetworkListManager.localWifiList = mWifiManager.getScanResults();
+            mNetworkListManager.setConfiguredWifiList(mWifiManager.getConfiguredNetworks());
+            mNetworkListManager.setLocalWifiList(mWifiManager.getScanResults());
 
-
-            mNetworkLogger.getNetworkInformation();
+            connectionInfo.retrieveAllInfo();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void results){
             mNetworkListManager.updateNetworkList(mWifiManager);
-            mNetworkLogger.logNetworkInfo();
+            mNetworkLogger.logConnection(connectionInfo);
         }
     }
 
