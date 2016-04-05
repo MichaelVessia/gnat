@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.util.Log;
 import android.util.JsonWriter;
 
@@ -27,6 +28,13 @@ public class NetworkLogger {
 
 
 
+
+    public String getDeviceInfo() {
+        return Build.BRAND
+                + " " + Build.MANUFACTURER
+                + " " + Build.MODEL
+                + " running SDK " + Build.VERSION.SDK_INT;
+    }
     public void logConnection(ConnectionInfo connection){
 
         File file = new File(this.context.getExternalCacheDir(),
@@ -53,6 +61,11 @@ public class NetworkLogger {
         writer.name("DateTime").value(DateFormat.getDateTimeInstance().format(new Date()));
         writer.name("SSID").value(connection.getSSID());
         writer.name("BSSID").value(connection.getBSSID());
+        writer.name("SignalStrength").value(connection.getSignalStrength());
+
+        writer.name("DeviceInfo").value(getDeviceInfo());
+        writer.name("DeviceMAC").value(connection.getMacAddress());
+
         writer.endObject();
         writer.close();
     }

@@ -35,5 +35,16 @@ public class ConnectionInfo {
         return bssid;
     }
 
+    public String getSignalStrength(){
+        int signal = this.wifiInfo.getRssi();
+        signal = this.mainWifi.calculateSignalLevel(signal, 101);
+
+        return signal + "%";
+    }
+
+    public String getMacAddress(){
+        return this.wifiInfo.getMacAddress();
+    }
+
 
 }
