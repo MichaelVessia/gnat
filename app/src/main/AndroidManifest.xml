@@ -28,6 +28,7 @@
             android:name=".MyPreferenceActivity"
             android:label="Preferences">
         </activity>
+        <service android:name=".LoggingService" />
     </application>
 
 </manifest>

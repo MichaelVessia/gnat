@@ -22,9 +22,7 @@ public class MainActivity extends AppCompatActivity {
     WifiManager mWifiManager;
     NetworkListManager mNetworkListManager = new NetworkListManager(this);
     NetworkLogger mNetworkLogger = new NetworkLogger(this);
-    ConnectionInfo connectionInfo = new ConnectionInfo(this);
-
-
+    ConnectionInfo connectionInfo = ConnectionInfo.getInstance(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1);
 
 
+        LoggingService.setServiceAlarm(this, true);
+
         new AsyncConnection().execute();
 
     }
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                // User chose the "Refesh" item, refresh the network list...
+                // User chose the "Refresh" item, refresh the network list...
                 refresh();
                 return true;
             case R.id.action_settings:
