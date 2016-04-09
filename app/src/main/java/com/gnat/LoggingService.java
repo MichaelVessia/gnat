@@ -6,15 +6,19 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class LoggingService extends IntentService {
 
     private static final String TAG = "LoggingService";
-    private static final int LOG_INTERVAL = 1000 * 60; // 60 seconds
+    private static int logInterval = 1000 * 60; // 60 seconds
     private ConnectionInfo connectionInfo;
     private NetworkLogger networkLogger;
+    SharedPreferences preferences;
+
 
     public LoggingService() {
         super(TAG);
@@ -25,6 +29,9 @@ public class LoggingService extends IntentService {
         super.onCreate();
         this.networkLogger = new NetworkLogger(this);
         this.connectionInfo = new ConnectionInfo(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int minutes = Integer.parseInt(preferences.getString("logging_freq", "1"));
+        this.logInterval *= minutes;
     }
 
     public static Intent newIntent(Context context){
@@ -39,7 +46,7 @@ public class LoggingService extends IntentService {
 
         if(isOn){
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime(), LOG_INTERVAL, pi);
+                    SystemClock.elapsedRealtime(), logInterval, pi);
         }
         else {
             alarmManager.cancel(pi);

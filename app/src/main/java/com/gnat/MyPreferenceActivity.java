@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 public class MyPreferenceActivity extends PreferenceActivity {
 
-    SharedPreferences preferences;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,10 @@ public class MyPreferenceActivity extends PreferenceActivity {
         String ip = preferences.getString("pref_server_ip", "No IP");
     }
 
+    public boolean validateIP(String ip){
+        return Patterns.IP_ADDRESS.matcher(ip).matches();
+    }
+
     public static class MyPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(final Bundle savedInstanceState) {
@@ -36,8 +40,5 @@ public class MyPreferenceActivity extends PreferenceActivity {
     }
 
 
-    public boolean validateIP(String ip){
-        return Patterns.IP_ADDRESS.matcher(ip).matches();
-    }
 
 }

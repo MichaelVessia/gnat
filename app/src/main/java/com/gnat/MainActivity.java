@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1);
 
 
-        shouldStartLogging = preferences.getBoolean("LoggingToggle", true);
+        shouldStartLogging = preferences.getBoolean("logging_toggle", true);
             // Togglelogging service
             LoggingService.setServiceAlarm(this, shouldStartLogging);
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onResume();
 
-        shouldStartLogging = preferences.getBoolean("LoggingToggle", true);
+        shouldStartLogging = preferences.getBoolean("logging_toggle", true);
         // Togglelogging service
         LoggingService.setServiceAlarm(this, shouldStartLogging);
 

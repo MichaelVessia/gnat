@@ -6,10 +6,15 @@
 
         <SwitchPreference
             android:defaultValue="true"
-            android:key="LoggingToggle"
+            android:key="logging_toggle"
             android:title="Background Logging"
             />
 
+    <EditTextPreference
+        android:key="logging_freq"
+        android:inputType="number"
+        android:title="Logging Frequency"
+        android:summary="Minutes in-between logs" />
 
 
     <PreferenceScreen
