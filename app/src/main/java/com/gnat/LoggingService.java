@@ -22,7 +22,8 @@ public class LoggingService extends IntentService {
 
     public LoggingService(Context context) {
         super(TAG);
-        this.context = context;
+        // We get application context here because the service exists after the activity is gone
+        this.context = context.getApplicationContext();
     }
 
     public static Intent newIntent(Context context){
@@ -44,6 +45,8 @@ public class LoggingService extends IntentService {
             pi.cancel();
         }
     }
+
+
 
     @Override
     protected void onHandleIntent(Intent intent){
