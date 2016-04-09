@@ -3,9 +3,11 @@ package com.gnat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,8 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     WifiManager mWifiManager;
     NetworkListManager mNetworkListManager = new NetworkListManager(this);
-    NetworkLogger mNetworkLogger = new NetworkLogger(this);
-    ConnectionInfo connectionInfo = ConnectionInfo.getInstance(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mNetworkListManager.configuredWifiListView = (ListView) findViewById(R.id.configuredWifiList);
         mNetworkListManager.configuredWifiListAdapter = new ArrayAdapter<>(this,
@@ -37,12 +39,19 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1);
 
 
-        LoggingService.setServiceAlarm(this, true);
+        if(preferences.getBoolean("LoggingToggle", true)) {
+            // Start logging service
+            LoggingService.setServiceAlarm(this, true);
+        }
 
+        // Populate wifi list
         new AsyncConnection().execute();
 
     }
 
+    /*
+        Refreshes wifilist by executing a new async connection
+     */
     public void refresh(){
         new AsyncConnection().execute();
     }
@@ -86,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onResume();
     }
-    
 
     private class AsyncConnection extends AsyncTask<Void, Void, Void> {
 
@@ -106,14 +114,12 @@ public class MainActivity extends AppCompatActivity {
             mNetworkListManager.setConfiguredWifiList(mWifiManager.getConfiguredNetworks());
             mNetworkListManager.setLocalWifiList(mWifiManager.getScanResults());
 
-            connectionInfo.retrieveAllInfo();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void results){
             mNetworkListManager.updateNetworkList(mWifiManager);
-            mNetworkLogger.logConnection(connectionInfo);
         }
     }
 

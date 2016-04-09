@@ -13,17 +13,18 @@ public class LoggingService extends IntentService {
 
     private static final String TAG = "LoggingService";
     private static final int LOG_INTERVAL = 1000 * 60; // 60 seconds
-    private Context context;
-    private ConnectionInfo connectionInfo = ConnectionInfo.getInstance(context);
+    private ConnectionInfo connectionInfo;
+    private NetworkLogger networkLogger;
 
     public LoggingService() {
         super(TAG);
     }
 
-    public LoggingService(Context context) {
-        super(TAG);
-        // We get application context here because the service exists after the activity is gone
-        this.context = context.getApplicationContext();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        this.networkLogger = new NetworkLogger(this);
+        this.connectionInfo = new ConnectionInfo(this);
     }
 
     public static Intent newIntent(Context context){
@@ -46,12 +47,18 @@ public class LoggingService extends IntentService {
         }
     }
 
+    public static boolean isServiceAlarmOn(Context context) {
+        Intent i = LoggingService.newIntent(context);
+        PendingIntent pi = PendingIntent.getService(
+                context, 0, i, PendingIntent.FLAG_NO_CREATE);
+        return pi != null;
+    }
 
 
     @Override
     protected void onHandleIntent(Intent intent){
         Log.i(TAG, "Recieved an intent: " + intent);
-
-
+        connectionInfo.retrieveAllInfo();
+        networkLogger.logConnection(connectionInfo);
     }
 }

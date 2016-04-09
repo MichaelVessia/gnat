@@ -32,6 +32,7 @@ public class NetworkLogger {
                 + " " + Build.MODEL
                 + " running SDK " + Build.VERSION.SDK_INT;
     }
+
     public void logConnection(ConnectionInfo connection){
 
         File file = new File(this.context.getExternalCacheDir(),

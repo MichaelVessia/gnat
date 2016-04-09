@@ -14,16 +14,9 @@ public class ConnectionInfo {
     private NetworkInfo networkInfo;
     private WifiManager mainWifi;
 
-    private static ConnectionInfo instance = null;
-    private ConnectionInfo(Context context) {
-        this.context = context;
-    }
 
-    public static ConnectionInfo getInstance(Context context){
-        if(instance == null){
-            instance = new ConnectionInfo(context);
-        }
-        return instance;
+    public ConnectionInfo(Context context) {
+        this.context = context;
     }
 
     public void retrieveAllInfo(){

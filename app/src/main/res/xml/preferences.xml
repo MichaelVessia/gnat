@@ -4,6 +4,14 @@
     android:title="@string/settings">
 
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="LoggingToggle"
+            android:title="Background Logging"
+            />
+
+
+
     <PreferenceScreen
         android:key="pref_server"
         android:title="@string/pref_group_server">
@@ -15,12 +23,12 @@
             android:summary="@string/pref_server_summary"
             android:title="@string/pref_server_ip" />
 
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_server_save_logs"
             android:title="@string/pref_server_save_logs"
             android:summary="@string/pref_server_logs_summary"/>
+
     </PreferenceScreen>
 
 

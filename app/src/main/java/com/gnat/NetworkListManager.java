@@ -14,10 +14,8 @@ import java.util.List;
 
 public class NetworkListManager {
 
+
     private List<String> ssids = new ArrayList<>();
-
-
-
     private List<WifiConfiguration> configuredWifiList;
     public ArrayAdapter<String> configuredWifiListAdapter;
     public ListView configuredWifiListView;
@@ -28,10 +26,10 @@ public class NetworkListManager {
     public ArrayAdapter<String> localWifiListAdapter;
     public ListView localWifiListView;
 
-    private Context mContext;
+    private Context context;
 
-    public NetworkListManager(Context c){
-        this.mContext = c;
+    public NetworkListManager(Context context){
+        this.context = context;
     }
 
     public void setConfiguredWifiList(List<WifiConfiguration> configuredWifiList) {
@@ -49,10 +47,10 @@ public class NetworkListManager {
    */
     public void clearNetworkList() {
 
-        configuredWifiListAdapter = new ArrayAdapter<>(mContext,
+        configuredWifiListAdapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_1, new ArrayList<String>());
 
-        localWifiListAdapter = new ArrayAdapter<String>(mContext,
+        localWifiListAdapter = new ArrayAdapter<String>(context,
                 android.R.layout.simple_list_item_1, new ArrayList<String>());
 
         ssids = new ArrayList<>();
@@ -98,6 +96,10 @@ public class NetworkListManager {
         localWifiListView.setAdapter(localWifiListAdapter);
 
     }
+
+
+
+
 
 
 }
