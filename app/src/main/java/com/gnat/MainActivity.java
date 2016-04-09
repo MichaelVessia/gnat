@@ -21,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
     WifiManager mWifiManager;
     NetworkListManager mNetworkListManager = new NetworkListManager(this);
 
+    SharedPreferences preferences;
+    private boolean shouldStartLogging;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mNetworkListManager.configuredWifiListView = (ListView) findViewById(R.id.configuredWifiList);
         mNetworkListManager.configuredWifiListAdapter = new ArrayAdapter<>(this,
@@ -39,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1);
 
 
-        if(preferences.getBoolean("LoggingToggle", true)) {
-            // Start logging service
-            LoggingService.setServiceAlarm(this, true);
-        }
+        shouldStartLogging = preferences.getBoolean("LoggingToggle", true);
+            // Togglelogging service
+            LoggingService.setServiceAlarm(this, shouldStartLogging);
+
 
         // Populate wifi list
         new AsyncConnection().execute();
@@ -94,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
+
+        shouldStartLogging = preferences.getBoolean("LoggingToggle", true);
+        // Togglelogging service
+        LoggingService.setServiceAlarm(this, shouldStartLogging);
+
     }
 
     private class AsyncConnection extends AsyncTask<Void, Void, Void> {

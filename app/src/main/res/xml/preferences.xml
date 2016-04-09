@@ -15,6 +15,7 @@
     <PreferenceScreen
         android:key="pref_server"
         android:title="@string/pref_group_server">
+
         <EditTextPreference
             android:id="@+id/pref_server_ip"
             android:inputType="number"
