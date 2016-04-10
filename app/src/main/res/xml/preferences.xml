@@ -17,6 +17,11 @@
         android:summary="Minutes in-between logs" />
 
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:title="Force WiFi On"
+        android:key="force_wifi_on" />
+
     <PreferenceScreen
         android:key="pref_server"
         android:title="@string/pref_group_server">

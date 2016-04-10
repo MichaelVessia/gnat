@@ -22,7 +22,9 @@ public class MainActivity extends AppCompatActivity {
     NetworkListManager mNetworkListManager = new NetworkListManager(this);
 
     SharedPreferences preferences;
+
     private boolean shouldStartLogging;
+    private boolean forceWifiOn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -46,10 +50,12 @@ public class MainActivity extends AppCompatActivity {
             // Togglelogging service
             LoggingService.setServiceAlarm(this, shouldStartLogging);
 
+        forceWifiOn = preferences.getBoolean("force_wifi_on", true);
 
-        // Populate wifi list
-        new AsyncConnection().execute();
-
+        if(mWifiManager.isWifiEnabled()) {
+            // Populate wifi list
+            new AsyncConnection().execute();
+        }
     }
 
     /*
@@ -108,17 +114,20 @@ public class MainActivity extends AppCompatActivity {
 
         public AsyncConnection() {
             super();
-            mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 
-            // TODO: Add condition here to check if force wifi on is enabled in settings
             if(!mWifiManager.isWifiEnabled()) {
-                mWifiManager.setWifiEnabled(true);
+                if(forceWifiOn) {
+                    mWifiManager.setWifiEnabled(true);
+                } else {
+                    cancel(true);
+                }
             }
 
         }
         @Override
         protected Void doInBackground(Void... voids) {
+            if(isCancelled()) return null;
             mNetworkListManager.setConfiguredWifiList(mWifiManager.getConfiguredNetworks());
             mNetworkListManager.setLocalWifiList(mWifiManager.getScanResults());
 
