@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.util.JsonWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -4,17 +4,10 @@ package com.gnat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.util.Log;
 import android.util.Patterns;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.Toast;
 
 public class MyPreferenceActivity extends PreferenceActivity {
 
