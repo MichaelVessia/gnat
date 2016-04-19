@@ -76,7 +76,7 @@ public class NetworkListManager {
             localWifiListAdapter.add(result.SSID + " " + result.BSSID);
             if(configuredSSID.contains(result.SSID)) {
                 if(result.BSSID.equals(currentConnection.getBSSID())) {
-                    ssids.add(result.SSID + " " + "(Connected)");
+                    ssids.add(0, result.SSID + " " + "(Connected)");
                 } else {
                     ssids.add(result.SSID + " " + result.BSSID);
                 }

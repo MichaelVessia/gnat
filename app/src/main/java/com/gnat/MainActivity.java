@@ -104,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onResume();
 
+        if(!mWifiManager.isWifiEnabled() && forceWifiOn) {
+            mWifiManager.setWifiEnabled(true);
+        }
+
         shouldStartLogging = preferences.getBoolean("logging_toggle", true);
         // Togglelogging service
         LoggingService.setServiceAlarm(this, shouldStartLogging);
@@ -114,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
         public AsyncConnection() {
             super();
-
 
             if(!mWifiManager.isWifiEnabled()) {
                 if(forceWifiOn) {
