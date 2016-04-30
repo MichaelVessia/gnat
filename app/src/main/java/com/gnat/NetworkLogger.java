@@ -5,17 +5,26 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.util.JsonWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
 public class NetworkLogger {
 
 
+    private final String SERVER_URL = "https://gnat-rails.herokuapp.com";
     private Context context;
 
     public NetworkLogger(Context context){
@@ -41,8 +50,8 @@ public class NetworkLogger {
 
         try
         {
-            FileOutputStream out = new FileOutputStream(file);
-            writeJson(file.getName(), connection, out);
+            JSONObject log = makeLog(file.getName(), connection);
+            writeJson(file, log);
         }
         catch(IOException e)
         {
@@ -50,20 +59,34 @@ public class NetworkLogger {
         }
     }
 
-    public void writeJson(String fileName, ConnectionInfo connection, OutputStream out) throws IOException {
-        JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-        writer.setIndent("    ");
+    public JSONObject makeLog(String fileName, ConnectionInfo connection) {
 
-        writer.beginObject();
-        writer.name("file_name").value(fileName);
-        writer.name("date_time").value(DateFormat.getDateTimeInstance().format(new Date()));
-        writer.name("ssid").value(connection.getSSID());
-        writer.name("bssid").value(connection.getBSSID());
-        writer.name("signal_strength").value(connection.getSignalStrength());
-        writer.name("device_info").value(getDeviceInfo());
-        writer.name("device_mac").value(connection.getMacAddress());
-        writer.endObject();
-        writer.close();
+        JSONObject log = new JSONObject();
+
+        try {
+            log.put("file_name", fileName);
+            log.put("date_time", DateFormat.getDateTimeInstance().format(new Date()));
+            log.put("ssid", connection.getSSID());
+            log.put("bssid", connection.getBSSID());
+            log.put("signal_strength", connection.getSignalStrength());
+            log.put("device_info", getDeviceInfo());
+            log.put("device_mac", connection.getMacAddress());
+        } catch (JSONException e) { e.printStackTrace(); }
+
+        return log;
+    }
+
+    public void writeJson(File file, JSONObject log) throws IOException {
+
+        try {
+            file.createNewFile();
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(log.toString());
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
