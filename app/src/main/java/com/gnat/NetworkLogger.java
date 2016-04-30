@@ -4,34 +4,28 @@ package com.gnat;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-import android.util.JsonWriter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.Date;
+import com.loopj.android.http.*;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 public class NetworkLogger {
 
 
-    private final String SERVER_URL = "https://gnat-rails.herokuapp.com";
+    private final String SERVER_URL = "https://gnat-rails.herokuapp.com/logs";
     private Context context;
 
-    public NetworkLogger(Context context){
+    public NetworkLogger(Context context) {
         this.context = context;
     }
-
-
 
 
     public String getDeviceInfo() {
@@ -41,20 +35,18 @@ public class NetworkLogger {
                 + " running SDK " + Build.VERSION.SDK_INT;
     }
 
-    public void logConnection(ConnectionInfo connection){
+    public void logConnection(ConnectionInfo connection) {
 
         File file = new File(this.context.getExternalCacheDir(),
-                System.currentTimeMillis()+"_"+connection.getSSID()+".json");
+                System.currentTimeMillis() + "_" + connection.getSSID() + ".json");
 
-        Log.w("gnat", this.context.getExternalCacheDir()+"");
+        Log.w("gnat", this.context.getExternalCacheDir() + "");
 
-        try
-        {
+        try {
             JSONObject log = makeLog(file.getName(), connection);
             writeJson(file, log);
-        }
-        catch(IOException e)
-        {
+            uploadLog(log, SERVER_URL);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -71,7 +63,9 @@ public class NetworkLogger {
             log.put("signal_strength", connection.getSignalStrength());
             log.put("device_info", getDeviceInfo());
             log.put("device_mac", connection.getMacAddress());
-        } catch (JSONException e) { e.printStackTrace(); }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return log;
     }
@@ -89,4 +83,19 @@ public class NetworkLogger {
         }
     }
 
+    public void uploadLog(JSONObject log, String server) {
+
+        SyncHttpClient client = new SyncHttpClient();
+
+
+        StringEntity se = null;
+        try {
+            se = new StringEntity(log.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+
+        client.post(null, server, se, "application/json", new JsonHttpResponseHandler());
+    }
 }
