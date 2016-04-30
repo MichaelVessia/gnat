@@ -42,7 +42,7 @@ public class NetworkLogger {
         try
         {
             FileOutputStream out = new FileOutputStream(file);
-            writeJson(connection, out);
+            writeJson(file.getName(), connection, out);
         }
         catch(IOException e)
         {
@@ -50,19 +50,18 @@ public class NetworkLogger {
         }
     }
 
-    public void writeJson(ConnectionInfo connection, OutputStream out) throws IOException {
+    public void writeJson(String fileName, ConnectionInfo connection, OutputStream out) throws IOException {
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
         writer.setIndent("    ");
 
         writer.beginObject();
-        writer.name("DateTime").value(DateFormat.getDateTimeInstance().format(new Date()));
-        writer.name("SSID").value(connection.getSSID());
-        writer.name("BSSID").value(connection.getBSSID());
-        writer.name("SignalStrength").value(connection.getSignalStrength());
-
-        writer.name("DeviceInfo").value(getDeviceInfo());
-        writer.name("DeviceMAC").value(connection.getMacAddress());
-
+        writer.name("file_name").value(fileName);
+        writer.name("date_time").value(DateFormat.getDateTimeInstance().format(new Date()));
+        writer.name("ssid").value(connection.getSSID());
+        writer.name("bssid").value(connection.getBSSID());
+        writer.name("signal_strength").value(connection.getSignalStrength());
+        writer.name("device_info").value(getDeviceInfo());
+        writer.name("device_mac").value(connection.getMacAddress());
         writer.endObject();
         writer.close();
     }
