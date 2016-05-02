@@ -6,14 +6,12 @@
     <string name="localNetworkText">Local Networks</string>
 
 
-    <string name="pref_server_ip">IP address</string>
-    <string name="pref_server_summary">The IP address to connect to.</string>
+    <string name="pref_server_ip">Server Location</string>
+    <string name="pref_server_summary">Web address or IP of the server</string>
+    <string name="default_server_location">https://gnat-rails.herokuapp.com/logs</string>
     <string name="pref_server_save_logs">Log files</string>
-    <string name="pref_server_logs_summary">Save log files on server?</string>
 
     <string name="settings">Settings</string>
     <string name="settings_summary">Configuration for the app.</string>
-
-    <string name="pref_group_server">Server</string>
 
 </resources>

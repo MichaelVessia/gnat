@@ -2,7 +2,9 @@ package com.gnat;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +24,12 @@ public class NetworkLogger {
 
     private final String SERVER_URL = "https://gnat-rails.herokuapp.com/logs";
     private Context context;
+    private SharedPreferences preferences;
+
 
     public NetworkLogger(Context context) {
         this.context = context;
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
     }
 
 
@@ -44,8 +49,12 @@ public class NetworkLogger {
 
         try {
             JSONObject log = makeLog(file.getName(), connection);
-            writeJson(file, log);
-            uploadLog(log, SERVER_URL);
+            if(preferences.getBoolean("local_logging", true)) {
+                writeJson(file, log);
+            }
+            if(preferences.getBoolean("server_logging", true)) {
+                uploadLog(log, SERVER_URL);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

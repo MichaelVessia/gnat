@@ -4,43 +4,40 @@
     android:title="@string/settings">
 
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="logging_toggle"
-            android:title="Background Logging"
-            />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="logging_toggle"
+        android:title="Background Logging" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="local_logging"
+        android:title="Save Logs Locally" />
 
     <EditTextPreference
-        android:key="logging_freq"
         android:inputType="number"
-        android:title="Logging Frequency"
-        android:summary="Minutes in-between logs" />
+        android:key="logging_freq"
+        android:summary="Minutes in-between logs"
+        android:title="Logging Frequency" />
 
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:title="Force WiFi On"
-        android:key="force_wifi_on" />
+        android:key="force_wifi_on"
+        android:title="Force WiFi On" />
 
-    <PreferenceScreen
-        android:key="pref_server"
-        android:title="@string/pref_group_server">
 
-        <EditTextPreference
-            android:id="@+id/pref_server_ip"
-            android:inputType="number"
-            android:digits="0123456789."
-            android:key="pref_server_ip"
-            android:summary="@string/pref_server_summary"
-            android:title="@string/pref_server_ip" />
+    <EditTextPreference
+        android:id="@+id/pref_server_location"
+        android:defaultValue="@string/default_server_location"
+        android:key="pref_server_location"
+        android:summary="@string/pref_server_summary"
+        android:title="@string/pref_server_ip" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_server_save_logs"
-            android:title="@string/pref_server_save_logs"
-            android:summary="@string/pref_server_logs_summary"/>
-
-    </PreferenceScreen>
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="server_logging"
+        android:title="Save Logs on Server" />
 
 
 </PreferenceScreen>
