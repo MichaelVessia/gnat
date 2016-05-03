@@ -15,6 +15,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.Date;
 import com.loopj.android.http.*;
+
+import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
@@ -114,6 +116,16 @@ public class NetworkLogger {
         }
         se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 
-        client.post(null, server, se, "application/json", new JsonHttpResponseHandler());
+        client.post(null, server, se, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            }
+        });
+
+
     }
 }
