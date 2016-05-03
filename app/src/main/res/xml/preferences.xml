@@ -39,5 +39,4 @@
         android:key="server_logging"
         android:title="Save Logs on Server" />
 
-
 </PreferenceScreen>

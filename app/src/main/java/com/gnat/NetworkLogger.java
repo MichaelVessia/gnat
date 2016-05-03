@@ -22,7 +22,7 @@ import cz.msebera.android.httpclient.protocol.HTTP;
 public class NetworkLogger {
 
 
-    private final String SERVER_URL = "https://gnat-rails.herokuapp.com/logs";
+    private String serverUrl;
     private Context context;
     private SharedPreferences preferences;
 
@@ -30,6 +30,7 @@ public class NetworkLogger {
     public NetworkLogger(Context context) {
         this.context = context;
         this.preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
+        this.serverUrl = preferences.getString("pref_server_location", this.context.getString(R.string.default_server_location));
     }
 
 
@@ -45,16 +46,16 @@ public class NetworkLogger {
         File file = new File(this.context.getExternalCacheDir(),
                 System.currentTimeMillis() + "_" + connection.getSSID() + ".json");
 
-        Log.w("gnat", this.context.getExternalCacheDir() + "");
-
         try {
             JSONObject log = makeLog(file.getName(), connection);
             if(preferences.getBoolean("local_logging", true)) {
                 writeJson(file, log);
             }
             if(preferences.getBoolean("server_logging", true)) {
-                uploadLog(log, SERVER_URL);
+                uploadLog(log, serverUrl);
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,13 +66,21 @@ public class NetworkLogger {
         JSONObject log = new JSONObject();
 
         try {
-            log.put("file_name", fileName);
+
+            if(preferences.getBoolean("local_logging", true)) {
+                log.put("file_name", fileName);
+            }
+
             log.put("date_time", DateFormat.getDateTimeInstance().format(new Date()));
             log.put("ssid", connection.getSSID());
             log.put("bssid", connection.getBSSID());
             log.put("signal_strength", connection.getSignalStrength());
             log.put("device_info", getDeviceInfo());
             log.put("device_mac", connection.getMacAddress());
+            log.put("state", connection.getState());
+            log.put("connection_type", connection.getConnectionType());
+            log.put("roaming", connection.isRoaming());
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

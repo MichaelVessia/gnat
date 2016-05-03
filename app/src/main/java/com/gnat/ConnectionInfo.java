@@ -47,5 +47,16 @@ public class ConnectionInfo {
         return this.wifiInfo.getMacAddress();
     }
 
+    public String getConnectionType() {
+        return networkInfo.getTypeName();
+    }
+
+    public String isRoaming() {
+        return networkInfo.isRoaming() ? "Yes" : "No" ;
+    }
+
+    public String getState() {
+        return networkInfo.getState().toString();
+    }
 
 }
